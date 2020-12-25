@@ -14,9 +14,10 @@ public class MessageBoard implements StringConsumer, StringProducer
 
     @Override
     public void consume(String str) throws IOException {
-        for(StringConsumer consumer : consumers) {
-            consumer.consume(str);
-        }
+
+            for (StringConsumer consumer : consumers) {
+                consumer.consume(str);
+            }
     }
 
     @Override
