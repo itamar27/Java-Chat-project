@@ -25,9 +25,7 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
     }
 
     @Override
-    public void addConsumer(StringConsumer sc) {
-        consumers.add(sc);
-    }
+    public void addConsumer(StringConsumer sc) {consumers.add(sc);}
 
     @Override
     public void removeConsumer(StringConsumer sc) {
