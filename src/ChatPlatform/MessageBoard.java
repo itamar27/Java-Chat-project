@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageBoard implements StringConsumer, StringProducer
-{
+public class MessageBoard implements StringConsumer, StringProducer {
     List<StringConsumer> consumers = null;
 
     public MessageBoard() {
@@ -15,9 +14,9 @@ public class MessageBoard implements StringConsumer, StringProducer
     @Override
     public void consume(String str) throws IOException {
 
-            for (StringConsumer consumer : consumers) {
-                consumer.consume(str);
-            }
+        for (StringConsumer consumer : consumers) {
+            consumer.consume(str);
+        }
     }
 
     @Override

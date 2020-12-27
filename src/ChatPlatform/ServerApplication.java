@@ -35,12 +35,6 @@ public class ServerApplication {
                 mb.addConsumer(connection);
                 connection.start();
             } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
-            }finally{
-
-                if(socket != null)
-                    mb.removeConsumer(connection);
             }
         }
     }
