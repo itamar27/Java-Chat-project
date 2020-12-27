@@ -15,6 +15,7 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
 
     public ConnectionProxy(Socket socket) throws IOException {
         consumers = new ArrayList<>();
+        this.socket = socket;
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
     }
@@ -42,8 +43,6 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
         }
     }
 }
