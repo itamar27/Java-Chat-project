@@ -15,8 +15,13 @@ public class ClientDescriptor implements StringConsumer, StringProducer
 
     @Override
     public void consume(String str) throws IOException {
-        for(StringConsumer consumer : consumers) {
-            
+        if(name == "") {
+            name = str;
+            for(StringConsumer consumer : consumers) {
+                consumer.consume(name + " has joined the chat!");
+            }
+        }
+        else for(StringConsumer consumer : consumers) {
             consumer.consume(name + ": " + str);
         }
     }
