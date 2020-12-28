@@ -14,8 +14,7 @@ public class ClientDescriptor implements StringConsumer, StringProducer {
     @Override
     public void consume(String str) throws IOException {
         if(str.equals("disconnect")){
-            name = "";
-            consumer.consume(name +" has left the chat");
+            consumer.consume(name + " has left the chat");
             removeConsumer(consumer);
         }
        else if (name.equals("")) {
@@ -32,7 +31,5 @@ public class ClientDescriptor implements StringConsumer, StringProducer {
     }
 
     @Override
-    public void removeConsumer(StringConsumer sc) {
-        consumer = null;
-    }
+    public void removeConsumer(StringConsumer sc) { consumer = null; }
 }

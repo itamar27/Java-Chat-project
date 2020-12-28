@@ -116,7 +116,7 @@ public class ClientGUI implements StringConsumer, StringProducer {
         chatConversationInit();
 
         try {
-            Socket sock = new Socket("127.0.0.1", 1300);
+            Socket sock = new Socket("10.0.0.100", 1300);
             ConnectionProxy connectionProxy = new ConnectionProxy(sock);
             addConsumer(connectionProxy);
             connectionProxy.addConsumer(this);
@@ -140,8 +140,11 @@ public class ClientGUI implements StringConsumer, StringProducer {
             chatFrame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
+                    try {
+                        connectionProxy.consume("disconnect");
+                    } catch (IOException ioException) {}
 
+                    super.windowClosing(e);
                     closeChatComponents();
                     closeConnection(sock);
                     System.exit(0);

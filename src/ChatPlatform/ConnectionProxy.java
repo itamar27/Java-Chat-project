@@ -38,7 +38,6 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
                 String readMsg = dis.readUTF();
                 consumer.consume(readMsg);
             }
-            consumer.consume("disconnect");
             this.removeConsumer(consumer);
         } catch (Exception e) {
         }
