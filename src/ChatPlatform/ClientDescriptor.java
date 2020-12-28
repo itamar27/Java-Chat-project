@@ -4,35 +4,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDescriptor implements StringConsumer, StringProducer
-{
-    List<StringConsumer> consumers = null;
+public class ClientDescriptor implements StringConsumer, StringProducer {
+    StringConsumer consumer;
     String name = "";
 
     public ClientDescriptor() {
-        consumers = new ArrayList<>();
     }
 
     @Override
     public void consume(String str) throws IOException {
-        if(name == "") {
+        if(str.equals("disconnect")){
+            name = "";
+            consumer.consume(name +" has left the chat");
+            removeConsumer(consumer);
+        }
+       else if (name.equals("")) {
             name = str;
-            for(StringConsumer consumer : consumers) {
-                consumer.consume(name + " has joined the chat!");
-            }
-        }
-        else for(StringConsumer consumer : consumers) {
+            consumer.consume(name + " has joined the chat!");
+        } else
             consumer.consume(name + ": " + str);
-        }
     }
+
 
     @Override
     public void addConsumer(StringConsumer sc) {
-        consumers.add(sc);
+        consumer = sc;
     }
 
     @Override
     public void removeConsumer(StringConsumer sc) {
-        consumers.remove(sc);
+        consumer = null;
     }
 }
