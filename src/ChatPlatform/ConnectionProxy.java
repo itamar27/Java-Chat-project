@@ -1,20 +1,16 @@
 package ChatPlatform;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ConnectionProxy extends Thread implements StringConsumer, StringProducer
-{
+
+public class ConnectionProxy extends Thread implements StringConsumer, StringProducer {
     private Socket socket = null;
-    private List<StringConsumer> consumers = null;
+    private StringConsumer consumer;
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
 
     public ConnectionProxy(Socket socket) throws IOException {
-        consumers = new ArrayList<>();
         this.socket = socket;
         dis = new DataInputStream(socket.getInputStream());
         dos = new DataOutputStream(socket.getOutputStream());
@@ -26,11 +22,13 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
     }
 
     @Override
-    public void addConsumer(StringConsumer sc) {consumers.add(sc);}
+    public void addConsumer(StringConsumer sc) {
+        consumer = sc;
+    }
 
     @Override
     public void removeConsumer(StringConsumer sc) {
-        consumers.remove(sc);
+        consumer = null;
     }
 
     @Override
@@ -38,11 +36,11 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
         try {
             while (!socket.isClosed()) {
                 String readMsg = dis.readUTF();
-                for(StringConsumer consumer : consumers) {
-                    consumer.consume(readMsg);
-                }
+                consumer.consume(readMsg);
             }
-        } catch (IOException e) {
+            consumer.consume("disconnect");
+            this.removeConsumer(consumer);
+        } catch (Exception e) {
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageBoard implements StringConsumer, StringProducer {
-    List<StringConsumer> consumers = null;
+    List<StringConsumer> consumers;
 
     public MessageBoard() {
         consumers = new ArrayList<>();
@@ -14,8 +14,14 @@ public class MessageBoard implements StringConsumer, StringProducer {
     @Override
     public void consume(String str) throws IOException {
 
-        for (StringConsumer consumer : consumers) {
-            consumer.consume(str);
+        int index = 0;
+        for( ; index < consumers.size(); index++) {
+            try {
+                consumers.get(index).consume(str);
+            }catch(IOException e){
+                removeConsumer(consumers.get(index));
+                index--;
+            }
         }
     }
 
