@@ -128,7 +128,7 @@ public class ClientGUI implements StringConsumer, StringProducer {
         chatConversationInit();
 
         try {
-            Socket sock = new Socket("127.0.0.1", 1300);
+            Socket sock = new Socket("10.0.0.100", 1300);
             ConnectionProxy connectionProxy = new ConnectionProxy(sock);
             addConsumer(connectionProxy);
             connectionProxy.addConsumer(this);

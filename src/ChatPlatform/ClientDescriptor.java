@@ -41,7 +41,5 @@ public class ClientDescriptor implements StringConsumer, StringProducer {
     }
 
     @Override
-    public void removeConsumer(StringConsumer sc) {
-        consumer = null;
-    }
+    public void removeConsumer(StringConsumer sc) { consumer = null; }
 }
