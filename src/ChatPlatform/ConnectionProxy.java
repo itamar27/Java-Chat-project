@@ -5,6 +5,13 @@ import java.net.Socket;
 
 
 public class ConnectionProxy extends Thread implements StringConsumer, StringProducer {
+    /*
+     * ConnectProxy class holds all the connection info about the other side and
+     * manages all the messages received and that need to be sent
+     * Act as a consumer for MessageBoard and ClientGUI
+     * Act as a producer for ClientDescriptor and ClientGUI
+     */
+
     private Socket socket = null;
     private StringConsumer consumer;
     private DataInputStream dis = null;
@@ -16,6 +23,9 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
         dos = new DataOutputStream(socket.getOutputStream());
     }
 
+    /*
+     * When consume is performed the string received should be delivered to the other side with UTF
+     */
     @Override
     public void consume(String str) throws IOException {
         dos.writeUTF(str);
@@ -31,6 +41,9 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
         consumer = null;
     }
 
+    /*
+     * For the threaded write and read we will use the run method to perform a loop for reading with UTF
+     */
     @Override
     public void run() {
         try {
@@ -38,7 +51,6 @@ public class ConnectionProxy extends Thread implements StringConsumer, StringPro
                 String readMsg = dis.readUTF();
                 consumer.consume(readMsg);
             }
-            consumer.consume("disconnect");
             this.removeConsumer(consumer);
         } catch (Exception e) {
         }

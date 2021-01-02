@@ -1,21 +1,30 @@
 package ChatPlatform;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClientDescriptor implements StringConsumer, StringProducer {
+    /*
+     * This class holds information about our user in the server side.
+     * Act as a consumer for ConnectionProxy
+     * Act as a producer for MessageBoard
+     */
+
     StringConsumer consumer;
     String name = "";
+
 
     public ClientDescriptor() {
     }
 
+    /*
+     * If consume is performed, the ClientDescriptor should add the
+     * relevant info to the message and pass it to his consumer
+     */
     @Override
     public void consume(String str) throws IOException {
         if(str.equals("disconnect")){
-            name = "";
             consumer.consume(name +" has left the chat");
+            name = "";
             removeConsumer(consumer);
         }
        else if (name.equals("")) {

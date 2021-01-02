@@ -2,15 +2,10 @@ package ChatPlatform;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.Flow;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Handler;
 
 public class ClientGUI implements StringConsumer, StringProducer {
 
@@ -30,6 +25,7 @@ public class ClientGUI implements StringConsumer, StringProducer {
     private JButton sendMessage;
     private JTextArea messageBoard;
     private JTextField textMessage;
+    private JScrollPane scroll;
 
     //Connection Variables
     private StringConsumer consumer;
@@ -42,6 +38,9 @@ public class ClientGUI implements StringConsumer, StringProducer {
         this.nickname = "";
     }
 
+    /*
+     * Initialize all JSwing components for the User GUI
+     */
     public void initComponents() {
         //chat sign up components
         frame = new JFrame("ChatPlatform");
@@ -59,9 +58,13 @@ public class ClientGUI implements StringConsumer, StringProducer {
         textMessage = new JTextField(20);
         messageBoard = new JTextArea(30, 30);
         messageBoard.setEditable(false);
+        scroll = new JScrollPane(messageBoard);
     }
 
 
+    /*
+     * Connect all the components of the Chat Sign up frame and set it on
+     */
     public void chatSignUpInit() {
 
         panel1.setBackground(Color.LIGHT_GRAY);
@@ -76,10 +79,15 @@ public class ClientGUI implements StringConsumer, StringProducer {
         frame.add(panel1);
         frame.add(panel2);
 
+        frame.getRootPane().setDefaultButton(button);
         frame.setSize(350, 400);
         frame.setVisible(true);
     }
 
+
+    /*
+     * Connect all the components of the Chat Conversation frame and set it on
+     */
     public void chatConversationInit() {
 
         displayText.setBackground(Color.LIGHT_GRAY);
@@ -87,29 +95,33 @@ public class ClientGUI implements StringConsumer, StringProducer {
 
         chatFrame.setLayout(new FlowLayout());
 
-        displayText.add(messageBoard);
+        displayText.add(scroll);
         readText.add(textMessage);
         readText.add(sendMessage);
 
         chatFrame.add(displayText);
         chatFrame.add(readText);
 
+        chatFrame.getRootPane().setDefaultButton(sendMessage);
         chatFrame.setSize(400, 600);
         chatFrame.setVisible(true);
     }
 
+    /*
+     * Starts the Client GUI application
+     */
     public void start() {
         chatSignUpInit();
 
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                nickname = clientDescriptor.getText();
-                runChat();
-            }
+        button.addActionListener(e -> {
+            nickname = clientDescriptor.getText();
+            runChat();
         });
     }
 
+    /*
+     * Establish connection to the server and manages it
+     */
     public void runChat() {
 
         closeSignUpComponents();
@@ -120,20 +132,17 @@ public class ClientGUI implements StringConsumer, StringProducer {
             ConnectionProxy connectionProxy = new ConnectionProxy(sock);
             addConsumer(connectionProxy);
             connectionProxy.addConsumer(this);
-            connectionProxy.consume(nickname);
+            consumer.consume(nickname);
             connectionProxy.start();
 
-            sendMessage.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String message = textMessage.getText();
-                    try {
-                        connectionProxy.consume(message);
-                        textMessage.setText("");
+            sendMessage.addActionListener(e -> {
+                String message = textMessage.getText();
+                try {
+                    consumer.consume(message);
+                    textMessage.setText("");
 
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
             });
 
@@ -141,7 +150,11 @@ public class ClientGUI implements StringConsumer, StringProducer {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
-
+                    try {
+                        consumer.consume("disconnect");
+                    } catch (IOException ioException) {
+                        System.out.println(ioException.getMessage());
+                    }
                     closeChatComponents();
                     closeConnection(sock);
                     System.exit(0);
@@ -153,6 +166,11 @@ public class ClientGUI implements StringConsumer, StringProducer {
             System.out.println(e.getMessage());
         }
     }
+
+    /*
+     * Close methods to each stage of the application
+     */
+
 
     public void closeConnection(Socket socket) {
         try {
@@ -182,10 +200,10 @@ public class ClientGUI implements StringConsumer, StringProducer {
     }
 
     /*
-     * Class methods to implement interface of StringConsumer and StringProducer
+     * When consume is performed the message passed to it will be displayed in the application
      */
     @Override
-    public void consume(String str) throws IOException {
+    public void consume(String str) {
         messageBoard.append(str + "\n");
     }
 
